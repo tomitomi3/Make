@@ -33,49 +33,49 @@ void loop()
   delay(2000);
 
   //serial write
-  Serial.print("Serial.Write 1byte\n");
+  Serial.print("Serial.Write 2byte\n");
   t0 = micros();
   Serial.write((uint8_t*)dat1, 2);
   t1 = micros() - t0;
   Serial.println((float)t1 / 1000.0);
   delay(2000);
 
-  Serial.print("Serial.Write 2byte\n");
+  Serial.print("Serial.Write 4byte\n");
   t0 = micros();
   Serial.write((uint8_t*)dat2, 4);
   t1 = micros() - t0;
   Serial.println((float)t1 / 1000.0);
   delay(2000);
 
-  Serial.print("Serial.Write 4byte\n");
+  Serial.print("Serial.Write 8byte\n");
   t0 = micros();
   Serial.write((uint8_t*)dat4, 8);
   t1 = micros() - t0;
   Serial.println((float)t1 / 1000.0);
   delay(2000);
 
-  Serial.print("Serial.Write 8byte\n");
+  Serial.print("Serial.Write 16byte\n");
   t0 = micros();
   Serial.write((uint8_t*)dat8, 16);
   t1 = micros() - t0;
   Serial.println((float)t1 / 1000.0);
   delay(2000);
 
-  Serial.print("Serial.Write 16byte\n");
+  Serial.print("Serial.Write 32byte\n");
   t0 = micros();
   Serial.write((uint8_t*)dat16, 32);
   t1 = micros() - t0;
   Serial.println((float)t1 / 1000.0);
   delay(2000);
 
-  Serial.print("Serial.Write 32byte\n");
+  Serial.print("Serial.Write 64byte\n");
   t0 = micros();
   Serial.write((uint8_t*)dat32, 64);
   t1 = micros() - t0;
   Serial.println((float)t1 / 1000.0);
   delay(2000);
  
-  Serial.print("Serial.Write 64byte\n");
+  Serial.print("Serial.Write 128byte\n");
   t0 = micros();
   Serial.write((uint8_t*)dat64, 128);
   t1 = micros() - t0;
