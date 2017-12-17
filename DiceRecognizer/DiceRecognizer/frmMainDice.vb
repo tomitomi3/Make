@@ -22,14 +22,16 @@ Public Class frmMainDice
 
     Private RECENT_COUNT_FILE As String = "RecentDiceCount.txt"
     Private RECENT_PARAMETER_FILE As String = "RecentParameter.txt"
+    Private RECENT_DICE_FILE As String = "RecentDice.txt"
 
     Private recognizeDice As Integer = 0
     Private state As Integer = 0
 
-    'サイコロ認識開始
+    'dice recognize flg
     Private doRecognize As Boolean = False
 
-    'parameters
+    'recognize parameters
+    Private DICE_AVERAGE As Integer = 15
     Private minDist As Double
     Private p1 As Double
     Private p2 As Double
@@ -41,17 +43,17 @@ Public Class frmMainDice
     Private isOpt As Boolean = False
 
     'dice
-    Private dice(5) As Integer
+    Private recognizedDice(5) As Integer
+    Private recognizedDiceList As New List(Of Integer)
 
     'sleep
     Private countState1 As Integer = 0
     Private countState2 As Integer = 0
     Private countState3 As Integer = 0
 
-    'ユーザーパラメータ
-    Private DICE_AVERAGE As Integer = 25
+    'parameter
     Private MAX_STATE1_SLEEP As Integer = 1
-    Private MAX_STATE2_SLEEP As Integer = 5
+    Private MAX_STATE2_SLEEP As Integer = 5 'not use
     Private MAX_STATE3_SLEEP As Integer = 20
 
     ''' <summary>
@@ -87,6 +89,8 @@ Public Class frmMainDice
                 End If
             End Try
         Next
+
+        tbxRecognizeParam.Text = Me.DICE_AVERAGE.ToString()
 
         'Combo box
         cbxCamID.DropDownStyle = ComboBoxStyle.DropDownList
@@ -156,6 +160,13 @@ Public Class frmMainDice
         SaveResult()
         SaveParameter()
 
+        'Dice
+        Using writer As New StreamWriter(RECENT_DICE_FILE, True, Encoding.GetEncoding("Shift_JIS"))
+            For Each dice In recognizedDiceList
+                writer.WriteLine(String.Format("{0}", dice))
+            Next
+        End Using
+
         'serial port
         If (oSerialPort.IsOpen) Then
             oSerialPort.Close()
@@ -210,8 +221,8 @@ Public Class frmMainDice
     ''' </summary>
     Private Sub SaveResult()
         Using writer As New StreamWriter(RECENT_COUNT_FILE, False, Encoding.GetEncoding("Shift_JIS"))
-            For i As Integer = 0 To Me.dice.Length - 1
-                writer.WriteLine(String.Format("{0}", Me.dice(i)))
+            For i As Integer = 0 To Me.recognizedDice.Length - 1
+                writer.WriteLine(String.Format("{0}", Me.recognizedDice(i)))
             Next
         End Using
     End Sub
@@ -234,7 +245,7 @@ Public Class frmMainDice
         End Using
         If ar.Count = 6 Then
             For i As Integer = 0 To ar.Count - 1
-                Me.dice(i) = Integer.Parse(ar(i))
+                Me.recognizedDice(i) = Integer.Parse(ar(i))
             Next
         End If
     End Sub
@@ -255,22 +266,35 @@ Public Class frmMainDice
             Cv.SetCaptureProperty(m_capture, CaptureProperty.FrameWidth, 480)
             Cv.SetCaptureProperty(m_capture, CaptureProperty.FrameHeight, 360)
             bgWorker.RunWorkerAsync()
+
+            btnCamOpen.Text = "CamClose"
+            btnCamOpen.BackColor = Color.Aqua
         Else
             bgWorker.CancelAsync()
+
+            btnCamOpen.Text = "CamOpen"
+            btnCamOpen.BackColor = Color.AliceBlue
         End If
     End Sub
 
     Private Sub btnStart_Click(sender As Object, e As EventArgs) Handles btnStart.Click
-        If oSerialPort.IsOpen() = True AndAlso m_capture IsNot Nothing Then
-            If doRecognize = False Then
+        If doRecognize = False Then
+            If oSerialPort.IsOpen() = True AndAlso m_capture IsNot Nothing Then
                 SendShoot()
                 System.Threading.Thread.Sleep(2000)
                 doRecognize = True
                 Me.count_recognize = 0
                 aveDiceValue = 0.0
-            Else
-                doRecognize = False
+
+                btnStart.Text = "Stop"
+                btnStart.BackColor = Color.DarkRed
             End If
+        Else
+            doRecognize = False
+            state = 0
+
+            btnStart.Text = "Start"
+            btnStart.BackColor = Color.AliceBlue
         End If
     End Sub
 
@@ -364,10 +388,16 @@ Public Class frmMainDice
                                 End Using
                             End Using
 
+                            'status label
+                            Me.BeginInvoke(
+                                Sub()
+                                    lblState.Text = "Recognize..."
+                                End Sub)
+
                             'dice detect using average
                             Me.count_recognize += 1
                             aveDiceValue += CDbl(circleCount)
-                            If Me.count_recognize = DICE_AVERAGE Then
+                            If Me.count_recognize > DICE_AVERAGE Then
                                 recognizeDice = CInt(Math.Round(aveDiceValue / CDbl(DICE_AVERAGE), MidpointRounding.AwayFromZero))
 
                                 'init counter
@@ -396,7 +426,8 @@ Public Class frmMainDice
                                 End If
                                 If failRecognize = False AndAlso doRecognize = True Then
                                     state = 1
-                                    Me.dice(recognizeDice - 1) += 1 'update dice count
+                                    Me.recognizedDice(recognizeDice - 1) += 1 'update dice count
+                                    Me.recognizedDiceList.Add(recognizeDice)
                                     Me.BeginInvoke(
                                             Sub()
                                                 UpdateFrequency()
@@ -425,11 +456,23 @@ Public Class frmMainDice
                     Me.count_recognize = 0
                     aveDiceValue = 0.0
 
+                    'status label
+                    Me.BeginInvoke(
+                        Sub()
+                            lblState.Text = "Shoot..."
+                        End Sub)
+
                     state = 3
                 ElseIf state = 3 Then
                     '--------------------------------------------------------------------------
                     'Sleep
                     '--------------------------------------------------------------------------
+                    'status label
+                    Me.BeginInvoke(
+                        Sub()
+                            lblState.Text = "wait..."
+                        End Sub)
+
                     countState3 += 1
                     If MAX_STATE3_SLEEP = countState3 Then
                         doRecognize = True
@@ -468,7 +511,7 @@ Public Class frmMainDice
             End If
 
             'wait これをなくすと最速になる。
-            Threading.Thread.Sleep(20)
+            Threading.Thread.Sleep(5)
 
             'ガーベージコレクト　これをしないとメモリがたまりつづける。
             If GC.GetTotalMemory(False) > 1024 * 1024 * 128 Then
@@ -493,7 +536,7 @@ Public Class frmMainDice
     Private Sub frmMain_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
         Dim pbxWidth = Me.pbxIplImg.Size.Width
         Dim pbxHeight = Me.pbxIplImg.Size.Height
-        Me.statusLabel.Text = String.Format("PBXSize:{0}, {1}", pbxWidth, pbxHeight)
+        Me.lblStatus.Text = String.Format("PBXSize:{0}, {1}", pbxWidth, pbxHeight)
     End Sub
 
     Private Sub pbxIplImg_MouseMove(sender As Object, e As MouseEventArgs) Handles pbxIplImg.MouseMove, pbxImageFeature.MouseMove
@@ -504,7 +547,7 @@ Public Class frmMainDice
         Dim rectCoordinateX = e.X
         Dim rectCoordinateY = pbxHeight - e.Y
 
-        Me.statusLabel.Text = String.Format("PBXSize:{0}, {1} Pos:{2}, {3}", pbxWidth, pbxHeight, rectCoordinateX, rectCoordinateY)
+        Me.lblStatus.Text = String.Format("PBXSize:{0}, {1} Pos:{2}, {3}", pbxWidth, pbxHeight, rectCoordinateX, rectCoordinateY)
     End Sub
 
     Private Sub tbxMinDist_KeyDown(sender As Object, e As KeyEventArgs) Handles tbxMinDist.KeyDown
@@ -557,29 +600,22 @@ Public Class frmMainDice
         Try
             If (oSerialPort.IsOpen) Then
                 oSerialPort.Close()
-            End If
 
-            'port name
-            Dim portName = cbxPort.SelectedItem.ToString()
-            If portName.Length = 0 Then
-                Return
-            End If
-
-            'port open
-            Me.oSerialPort.PortName = portName
-            Me.oSerialPort.Open()
-
-            btnPortOpen.BackColor = Color.Aqua
-        Catch ex As Exception
-
-        End Try
-    End Sub
-
-    Private Sub btnPortClose_Click(sender As Object, e As EventArgs) Handles btnPortClose.Click
-        Try
-            If (oSerialPort.IsOpen) Then
-                oSerialPort.Close()
+                btnPortOpen.Text = "PortOpen"
                 btnPortOpen.BackColor = Color.AliceBlue
+            Else
+                'port name
+                Dim portName = cbxPort.SelectedItem.ToString()
+                If portName.Length = 0 Then
+                    Return
+                End If
+
+                'port open
+                Me.oSerialPort.PortName = portName
+                Me.oSerialPort.Open()
+
+                btnPortOpen.Text = "PortClose"
+                btnPortOpen.BackColor = Color.Aqua
             End If
         Catch ex As Exception
 
@@ -602,7 +638,7 @@ Public Class frmMainDice
     '/////////////////////////////////////////////////////////////////////////////////////////
     Private Sub btnDebug_Click(sender As Object, e As EventArgs) Handles btnDebug.Click
         If recognizeDice > 0 AndAlso recognizeDice < 7 Then
-            Me.dice(recognizeDice - 1) += 1
+            Me.recognizedDice(recognizeDice - 1) += 1
             UpdateFrequency()
         End If
     End Sub
@@ -610,7 +646,7 @@ Public Class frmMainDice
     Private Sub InitPlot()
         Me.oPlot.Model = New OxyPlot.PlotModel("Dice Frequency")
         Me.oPlot.BackColor = Color.White
-        UpdatePlotYAxis(Me.dice.Max)
+        UpdatePlotYAxis(Me.recognizedDice.Max)
     End Sub
 
     Private Sub UpdateFrequency()
@@ -619,24 +655,24 @@ Public Class frmMainDice
         End If
 
         'update Y Axis
-        UpdatePlotYAxis(Me.dice.Max)
+        UpdatePlotYAxis(Me.recognizedDice.Max)
 
         'update bar
         Me.oPlot.Model.Series.Clear()
         Dim series = New OxyPlot.Series.ColumnSeries()
-        For i As Integer = 0 To Me.dice.Length - 1
-            series.Items.Add(New OxyPlot.Series.ColumnItem(Me.dice(i)))
+        For i As Integer = 0 To Me.recognizedDice.Length - 1
+            series.Items.Add(New OxyPlot.Series.ColumnItem(Me.recognizedDice(i)))
         Next
         Me.oPlot.Model.Series.Add(series)
         Me.oPlot.InvalidatePlot(True)
 
         'label update
-        Dim sum = Me.dice.Sum()
+        Dim sum = Me.recognizedDice.Sum()
         Dim strLbl As String = String.Empty
         strLbl += String.Format("Total Shake count:{0}", sum)
         strLbl += vbCrLf
-        For i As Integer = 0 To Me.dice.Length - 1
-            strLbl += String.Format("Dice {0} : {1}", i + 1, dice(i))
+        For i As Integer = 0 To Me.recognizedDice.Length - 1
+            strLbl += String.Format("Dice {0} : {1}", i + 1, recognizedDice(i))
             strLbl += vbCrLf
         Next
         lblDetail.Text = strLbl
@@ -658,8 +694,8 @@ Public Class frmMainDice
     End Sub
 
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
-        For i As Integer = 0 To Me.dice.Length - 1
-            Me.dice(i) = 0
+        For i As Integer = 0 To Me.recognizedDice.Length - 1
+            Me.recognizedDice(i) = 0
         Next
         UpdateFrequency()
     End Sub
@@ -698,6 +734,13 @@ Public Class frmMainDice
         Finally
             isOpt = False
         End Try
+    End Sub
+
+    Private Sub btnRecognizeParamUpdate_Click(sender As Object, e As EventArgs) Handles btnRecognizeParamUpdate.Click
+        If String.IsNullOrEmpty(tbxRecognizeParam.Text) Then
+            Return
+        End If
+        Me.DICE_AVERAGE = Integer.Parse(tbxRecognizeParam.Text)
     End Sub
 End Class
 
