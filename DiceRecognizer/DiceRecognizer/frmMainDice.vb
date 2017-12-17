@@ -23,6 +23,12 @@ Public Class frmMainDice
     Private RECENT_COUNT_FILE As String = "RecentDiceCount.txt"
     Private RECENT_PARAMETER_FILE As String = "RecentParameter.txt"
 
+    Private recognizeDice As Integer = 0
+    Private state As Integer = 0
+
+    'サイコロ認識開始
+    Private doRecognize As Boolean = False
+
     'parameters
     Private minDist As Double
     Private p1 As Double
@@ -118,7 +124,7 @@ Public Class frmMainDice
         'SerialPort
         Dim ports = System.IO.Ports.SerialPort.GetPortNames()
         If ports.Length = 0 Then
-            Return
+            'Return
         Else
             For i As Integer = 0 To ports.Length - 1
                 cbxPort.Items.Add(ports(i))
@@ -268,10 +274,6 @@ Public Class frmMainDice
         End If
     End Sub
 
-    Private recognizeDice As Integer = 0
-    Private doRecognize As Boolean = False
-    Private state As Integer = 0
-
     ''' <summary>
     ''' カメラ認識部分
     ''' </summary>
@@ -373,8 +375,8 @@ Public Class frmMainDice
                                 aveDiceValue = 0.0
 
                                 'output label(invokeしないと例外エラー）
-                                Dim successRecognize = (recognizeDice = 0) OrElse (recognizeDice > 6)
-                                If successRecognize Then
+                                Dim failRecognize = (recognizeDice = 0) OrElse (recognizeDice > 6)
+                                If failRecognize Then
                                     'fail
                                     Me.BeginInvoke(
                                         Sub()
@@ -392,7 +394,7 @@ Public Class frmMainDice
                                 If doRecognize = True Then
                                     state = 1
                                 End If
-                                If successRecognize = True AndAlso doRecognize = True Then
+                                If failRecognize = False AndAlso doRecognize = True Then
                                     state = 1
                                     Me.dice(recognizeDice - 1) += 1 'update dice count
                                     Me.BeginInvoke(
@@ -422,6 +424,8 @@ Public Class frmMainDice
                     doRecognize = False
                     Me.count_recognize = 0
                     aveDiceValue = 0.0
+
+                    state = 3
                 ElseIf state = 3 Then
                     '--------------------------------------------------------------------------
                     'Sleep
@@ -430,6 +434,10 @@ Public Class frmMainDice
                     If MAX_STATE3_SLEEP = countState3 Then
                         doRecognize = True
                         countState3 = 0
+
+                        Me.count_recognize = 0
+                        aveDiceValue = 0.0
+
                         state = 0
                     End If
                 End If
@@ -592,9 +600,11 @@ Public Class frmMainDice
     '/////////////////////////////////////////////////////////////////////////////////////////
     'グラフ
     '/////////////////////////////////////////////////////////////////////////////////////////
-    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-        Me.dice(0) += 1
-        UpdateFrequency()
+    Private Sub btnDebug_Click(sender As Object, e As EventArgs) Handles btnDebug.Click
+        If recognizeDice > 0 AndAlso recognizeDice < 7 Then
+            Me.dice(recognizeDice - 1) += 1
+            UpdateFrequency()
+        End If
     End Sub
 
     Private Sub InitPlot()
@@ -647,6 +657,12 @@ Public Class frmMainDice
         Me.oPlot.Model.Axes.Add(y)
     End Sub
 
+    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
+        For i As Integer = 0 To Me.dice.Length - 1
+            Me.dice(i) = 0
+        Next
+        UpdateFrequency()
+    End Sub
     '/////////////////////////////////////////////////////////////////////////////////////////
     '最適化　実験
     '/////////////////////////////////////////////////////////////////////////////////////////

@@ -58,10 +58,11 @@ Partial Class frmMainDice
         Me.tbxCorrect = New System.Windows.Forms.TextBox()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.oPlot = New OxyPlot.WindowsForms.Plot()
-        Me.Button1 = New System.Windows.Forms.Button()
+        Me.btnDebug = New System.Windows.Forms.Button()
         Me.btnStart = New System.Windows.Forms.Button()
         Me.lblDetail = New System.Windows.Forms.Label()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.btnClear = New System.Windows.Forms.Button()
         CType(Me.pbxIplImg, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.mStrip.SuspendLayout()
         CType(Me.pbxCliped, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -80,7 +81,7 @@ Partial Class frmMainDice
         '
         'btnCamOpen
         '
-        Me.btnCamOpen.Location = New System.Drawing.Point(13, 26)
+        Me.btnCamOpen.Location = New System.Drawing.Point(13, 27)
         Me.btnCamOpen.Name = "btnCamOpen"
         Me.btnCamOpen.Size = New System.Drawing.Size(75, 23)
         Me.btnCamOpen.TabIndex = 1
@@ -93,7 +94,7 @@ Partial Class frmMainDice
         'cbxCamID
         '
         Me.cbxCamID.FormattingEnabled = True
-        Me.cbxCamID.Location = New System.Drawing.Point(94, 27)
+        Me.cbxCamID.Location = New System.Drawing.Point(94, 28)
         Me.cbxCamID.Name = "cbxCamID"
         Me.cbxCamID.Size = New System.Drawing.Size(77, 20)
         Me.cbxCamID.TabIndex = 2
@@ -289,7 +290,7 @@ Partial Class frmMainDice
         '
         'btnPortOpen
         '
-        Me.btnPortOpen.Location = New System.Drawing.Point(210, 26)
+        Me.btnPortOpen.Location = New System.Drawing.Point(221, 27)
         Me.btnPortOpen.Name = "btnPortOpen"
         Me.btnPortOpen.Size = New System.Drawing.Size(75, 23)
         Me.btnPortOpen.TabIndex = 6
@@ -299,14 +300,14 @@ Partial Class frmMainDice
         'cbxPort
         '
         Me.cbxPort.FormattingEnabled = True
-        Me.cbxPort.Location = New System.Drawing.Point(372, 27)
+        Me.cbxPort.Location = New System.Drawing.Point(383, 28)
         Me.cbxPort.Name = "cbxPort"
         Me.cbxPort.Size = New System.Drawing.Size(77, 20)
         Me.cbxPort.TabIndex = 2
         '
         'btnPortClose
         '
-        Me.btnPortClose.Location = New System.Drawing.Point(291, 26)
+        Me.btnPortClose.Location = New System.Drawing.Point(302, 27)
         Me.btnPortClose.Name = "btnPortClose"
         Me.btnPortClose.Size = New System.Drawing.Size(75, 23)
         Me.btnPortClose.TabIndex = 27
@@ -315,7 +316,7 @@ Partial Class frmMainDice
         '
         'btnSend
         '
-        Me.btnSend.Location = New System.Drawing.Point(455, 24)
+        Me.btnSend.Location = New System.Drawing.Point(466, 27)
         Me.btnSend.Name = "btnSend"
         Me.btnSend.Size = New System.Drawing.Size(75, 23)
         Me.btnSend.TabIndex = 28
@@ -349,10 +350,8 @@ Partial Class frmMainDice
         '
         'oPlot
         '
-        Me.oPlot.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.oPlot.BackColor = System.Drawing.Color.White
+        Me.oPlot.Dock = System.Windows.Forms.DockStyle.Left
         Me.oPlot.Location = New System.Drawing.Point(3, 15)
         Me.oPlot.Name = "oPlot"
         Me.oPlot.PanCursor = System.Windows.Forms.Cursors.Hand
@@ -363,21 +362,21 @@ Partial Class frmMainDice
         Me.oPlot.ZoomRectangleCursor = System.Windows.Forms.Cursors.SizeNWSE
         Me.oPlot.ZoomVerticalCursor = System.Windows.Forms.Cursors.SizeNS
         '
-        'Button1
+        'btnDebug
         '
-        Me.Button1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Button1.Location = New System.Drawing.Point(751, 269)
-        Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(75, 23)
-        Me.Button1.TabIndex = 32
-        Me.Button1.Text = "debug"
-        Me.Button1.UseVisualStyleBackColor = True
+        Me.btnDebug.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnDebug.Location = New System.Drawing.Point(753, 294)
+        Me.btnDebug.Name = "btnDebug"
+        Me.btnDebug.Size = New System.Drawing.Size(75, 23)
+        Me.btnDebug.TabIndex = 32
+        Me.btnDebug.Text = "debug"
+        Me.btnDebug.UseVisualStyleBackColor = True
         '
         'btnStart
         '
-        Me.btnStart.Location = New System.Drawing.Point(14, 320)
+        Me.btnStart.Location = New System.Drawing.Point(557, 27)
         Me.btnStart.Name = "btnStart"
-        Me.btnStart.Size = New System.Drawing.Size(320, 47)
+        Me.btnStart.Size = New System.Drawing.Size(75, 23)
         Me.btnStart.TabIndex = 33
         Me.btnStart.Text = "Start"
         Me.btnStart.UseVisualStyleBackColor = True
@@ -398,7 +397,8 @@ Partial Class frmMainDice
         Me.GroupBox1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.GroupBox1.Controls.Add(Me.Button1)
+        Me.GroupBox1.Controls.Add(Me.btnClear)
+        Me.GroupBox1.Controls.Add(Me.btnDebug)
         Me.GroupBox1.Controls.Add(Me.lblDetail)
         Me.GroupBox1.Controls.Add(Me.oPlot)
         Me.GroupBox1.Location = New System.Drawing.Point(14, 382)
@@ -406,6 +406,15 @@ Partial Class frmMainDice
         Me.GroupBox1.Size = New System.Drawing.Size(992, 333)
         Me.GroupBox1.TabIndex = 35
         Me.GroupBox1.TabStop = False
+        '
+        'btnClear
+        '
+        Me.btnClear.Location = New System.Drawing.Point(753, 265)
+        Me.btnClear.Name = "btnClear"
+        Me.btnClear.Size = New System.Drawing.Size(75, 23)
+        Me.btnClear.TabIndex = 35
+        Me.btnClear.Text = "Clear"
+        Me.btnClear.UseVisualStyleBackColor = True
         '
         'frmMainDice
         '
@@ -493,9 +502,9 @@ Partial Class frmMainDice
     Friend WithEvents tbxCorrect As System.Windows.Forms.TextBox
     Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents oPlot As OxyPlot.WindowsForms.Plot
-    Friend WithEvents Button1 As System.Windows.Forms.Button
+    Friend WithEvents btnDebug As System.Windows.Forms.Button
     Friend WithEvents btnStart As System.Windows.Forms.Button
     Friend WithEvents lblDetail As System.Windows.Forms.Label
     Friend WithEvents GroupBox1 As System.Windows.Forms.GroupBox
-
+    Friend WithEvents btnClear As Button
 End Class
