@@ -66,6 +66,7 @@ Partial Class frmMainDice
         Me.btnRecognizeParamUpdate = New System.Windows.Forms.Button()
         Me.tbxRecognizeParam = New System.Windows.Forms.TextBox()
         Me.lblState = New System.Windows.Forms.Label()
+        Me.Label3 = New System.Windows.Forms.Label()
         CType(Me.pbxIplImg, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.mStrip.SuspendLayout()
         CType(Me.pbxCliped, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -448,11 +449,21 @@ Partial Class frmMainDice
         Me.lblState.TabIndex = 30
         Me.lblState.Text = "state..."
         '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(53, 322)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(243, 12)
+        Me.Label3.TabIndex = 31
+        Me.Label3.Text = "↑画面をクリックして青枠でサイコロを含むようにする"
+        '
         'frmMainDice
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(996, 711)
+        Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.lblState)
         Me.Controls.Add(Me.tbxRecognizeParam)
         Me.Controls.Add(Me.btnRecognizeParamUpdate)
@@ -545,4 +556,5 @@ Partial Class frmMainDice
     Friend WithEvents btnRecognizeParamUpdate As Button
     Friend WithEvents tbxRecognizeParam As TextBox
     Friend WithEvents lblState As Label
+    Friend WithEvents Label3 As Label
 End Class
