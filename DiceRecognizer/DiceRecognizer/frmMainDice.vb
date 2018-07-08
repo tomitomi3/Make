@@ -52,9 +52,9 @@ Public Class frmMainDice
     Private countState3 As Integer = 0
 
     'parameter
-    Private MAX_STATE1_SLEEP As Integer = 1
+    Private MAX_STATE1_SLEEP As Integer = 1 'previous Shoot dice
     Private MAX_STATE2_SLEEP As Integer = 5 'not use
-    Private MAX_STATE3_SLEEP As Integer = 20
+    Private MAX_STATE3_SLEEP As Integer = 23 '
 
     ''' <summary>
     ''' Form Load
@@ -137,10 +137,14 @@ Public Class frmMainDice
         End If
 
         'クリック
-        btnCamOpen.PerformClick()
+        'btnCamOpen.PerformClick()
 
         '結果の読み込み
         LoadResult()
+
+        'クリック位置
+        Me.clickedPoint.X = 133
+        Me.clickedPoint.Y = 115
 
         'plot
         InitPlot()
@@ -157,6 +161,7 @@ Public Class frmMainDice
         bgWorker.CancelAsync()
         System.Threading.Thread.Sleep(500)
 
+        '
         SaveResult()
         SaveParameter()
 
@@ -359,8 +364,8 @@ Public Class frmMainDice
                             Using clipedImage = clsUtil.ClipIplROI(tempipl, clickedPoint, 100, 100)
                                 Me.pbxCliped.ImageIpl = clipedImage
                                 Dim zoomSize = clipedImage.Size
-                                zoomSize.Height = 300
-                                zoomSize.Width = 300
+                                zoomSize.Height = 400   '300
+                                zoomSize.Width = 400    '300
                                 zoomIpl = New IplImage(zoomSize, BitDepth.U8, 1)
                                 Cv.Resize(clipedImage, zoomIpl, Interpolation.Linear)
                             End Using
@@ -449,7 +454,7 @@ Public Class frmMainDice
                     '--------------------------------------------------------------------------
                     'Shoot
                     '--------------------------------------------------------------------------
-                    SendShoot()
+                    SendShoot("f") 'a:10, d:13(default) 
 
                     'init counter
                     doRecognize = False
@@ -462,6 +467,7 @@ Public Class frmMainDice
                             lblState.Text = "Shoot..."
                         End Sub)
 
+                    'move next state
                     state = 3
                 ElseIf state = 3 Then
                     '--------------------------------------------------------------------------
@@ -482,6 +488,9 @@ Public Class frmMainDice
                         aveDiceValue = 0.0
 
                         state = 0
+                    ElseIf countState3 = 15 Then
+                        'サイコロが斜めになるのを抑止
+                        SendShoot("1") 'a:10, d:13(default) 
                     End If
                 End If
 
@@ -510,8 +519,8 @@ Public Class frmMainDice
                 'Console.WriteLine("{0}[FPS]", 1000.0 / sw.ElapsedMilliseconds)
             End If
 
-            'wait これをなくすと最速になる。
-            Threading.Thread.Sleep(5)
+            'カメラ画像取得タイミング調整　コメントアウトすると最速
+            Threading.Thread.Sleep(20)
 
             'ガーベージコレクト　これをしないとメモリがたまりつづける。
             If GC.GetTotalMemory(False) > 1024 * 1024 * 128 Then
@@ -531,6 +540,7 @@ Public Class frmMainDice
     Private Sub pbxIplImg_MouseDown(sender As Object, e As MouseEventArgs) Handles pbxIplImg.MouseDown, pbxImageFeature.MouseDown
         Me.clickedPoint.X = e.X
         Me.clickedPoint.Y = e.Y
+        Console.WriteLine("X={0},Y={1}", e.X, e.Y)
     End Sub
 
     Private Sub frmMain_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
@@ -581,6 +591,17 @@ Public Class frmMainDice
     End Sub
 
     Private Sub btnUpdate_Click(sender As Object, e As EventArgs) Handles btnUpdate.Click
+        ParamUpdate()
+    End Sub
+
+    Private Sub btnSend_Click(sender As Object, e As EventArgs) Handles btnSend.Click
+        SendShoot("d")
+    End Sub
+
+    ''' <summary>
+    ''' パラメータ更新
+    ''' </summary>
+    Private Sub ParamUpdate()
         Me.minDist = Double.Parse(tbxMinDist.Text)
         Me.p1 = Double.Parse(tbxP1.Text)
         Me.p2 = Double.Parse(tbxP2.Text)
@@ -589,8 +610,20 @@ Public Class frmMainDice
         SaveParameter()
     End Sub
 
-    Private Sub btnSend_Click(sender As Object, e As EventArgs) Handles btnSend.Click
-        SendShoot()
+    ''' <summary>
+    ''' Arduino　サイコロ振り信号を送信
+    ''' "d" is default 13[ms]
+    ''' </summary>
+    ''' <param name="v"></param>
+    Private Sub SendShoot(Optional ByVal v As String = "d")
+        Try
+            If oSerialPort.IsOpen = False Then
+                Return
+            End If
+            oSerialPort.Write(v, 0, 1)
+        Catch ex As Exception
+
+        End Try
     End Sub
 
     '/////////////////////////////////////////////////////////////////////////////////////////
@@ -622,16 +655,6 @@ Public Class frmMainDice
         End Try
     End Sub
 
-    Private Sub SendShoot()
-        Try
-            If oSerialPort.IsOpen = False Then
-                Return
-            End If
-            oSerialPort.Write("a", 0, 1)
-        Catch ex As Exception
-
-        End Try
-    End Sub
 
     '/////////////////////////////////////////////////////////////////////////////////////////
     'グラフ

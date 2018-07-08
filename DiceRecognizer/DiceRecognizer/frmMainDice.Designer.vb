@@ -108,7 +108,7 @@ Partial Class frmMainDice
         Me.mStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuToolStripMenuItem})
         Me.mStrip.Location = New System.Drawing.Point(0, 0)
         Me.mStrip.Name = "mStrip"
-        Me.mStrip.Size = New System.Drawing.Size(996, 24)
+        Me.mStrip.Size = New System.Drawing.Size(1059, 24)
         Me.mStrip.TabIndex = 0
         Me.mStrip.Text = "MenuStrip1"
         '
@@ -352,7 +352,7 @@ Partial Class frmMainDice
         Me.oPlot.Location = New System.Drawing.Point(3, 15)
         Me.oPlot.Name = "oPlot"
         Me.oPlot.PanCursor = System.Windows.Forms.Cursors.Hand
-        Me.oPlot.Size = New System.Drawing.Size(718, 296)
+        Me.oPlot.Size = New System.Drawing.Size(571, 296)
         Me.oPlot.TabIndex = 0
         Me.oPlot.Text = "oPlot"
         Me.oPlot.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE
@@ -362,7 +362,7 @@ Partial Class frmMainDice
         'btnDebug
         '
         Me.btnDebug.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnDebug.Location = New System.Drawing.Point(877, 87)
+        Me.btnDebug.Location = New System.Drawing.Point(940, 87)
         Me.btnDebug.Name = "btnDebug"
         Me.btnDebug.Size = New System.Drawing.Size(75, 23)
         Me.btnDebug.TabIndex = 3
@@ -382,10 +382,10 @@ Partial Class frmMainDice
         '
         Me.lblDetail.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lblDetail.AutoSize = True
-        Me.lblDetail.Font = New System.Drawing.Font("MS UI Gothic", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
-        Me.lblDetail.Location = New System.Drawing.Point(733, 26)
+        Me.lblDetail.Font = New System.Drawing.Font("MS UI Gothic", 24.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
+        Me.lblDetail.Location = New System.Drawing.Point(580, 15)
         Me.lblDetail.Name = "lblDetail"
-        Me.lblDetail.Size = New System.Drawing.Size(180, 19)
+        Me.lblDetail.Size = New System.Drawing.Size(284, 33)
         Me.lblDetail.TabIndex = 1
         Me.lblDetail.Text = "Total Shake count:"
         '
@@ -400,14 +400,14 @@ Partial Class frmMainDice
         Me.GroupBox1.Controls.Add(Me.oPlot)
         Me.GroupBox1.Location = New System.Drawing.Point(14, 382)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(969, 317)
+        Me.GroupBox1.Size = New System.Drawing.Size(1032, 317)
         Me.GroupBox1.TabIndex = 29
         Me.GroupBox1.TabStop = False
         '
         'btnClear
         '
         Me.btnClear.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnClear.Location = New System.Drawing.Point(877, 58)
+        Me.btnClear.Location = New System.Drawing.Point(940, 58)
         Me.btnClear.Name = "btnClear"
         Me.btnClear.Size = New System.Drawing.Size(75, 23)
         Me.btnClear.TabIndex = 2
@@ -462,7 +462,7 @@ Partial Class frmMainDice
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(996, 711)
+        Me.ClientSize = New System.Drawing.Size(1059, 711)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.lblState)
         Me.Controls.Add(Me.tbxRecognizeParam)
