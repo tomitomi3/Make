@@ -114,7 +114,7 @@ Public Class frmMainDice
 
         'hough circle parameters
         Me.tbxMinDist.Text = "8.0"
-        Me.tbxP1.Text = "28.0"
+        Me.tbxP1.Text = "70.0"
         Me.tbxP2.Text = "32.0"
         Me.tbxMinRadius.Text = "3"
         Me.tbxMaxRadius.Text = "35"
@@ -143,8 +143,8 @@ Public Class frmMainDice
         LoadResult()
 
         'クリック位置
-        Me.clickedPoint.X = 133
-        Me.clickedPoint.Y = 115
+        Me.clickedPoint.X = 140
+        Me.clickedPoint.Y = 120
 
         'plot
         InitPlot()
@@ -189,6 +189,7 @@ Public Class frmMainDice
             writer.WriteLine(String.Format("{0}", tbxP2.Text))
             writer.WriteLine(String.Format("{0}", tbxMinRadius.Text))
             writer.WriteLine(String.Format("{0}", tbxMaxRadius.Text))
+            writer.WriteLine(String.Format("{0}", tbxRecognizeParam.Text))
         End Using
     End Sub
 
@@ -214,11 +215,14 @@ Public Class frmMainDice
         tbxP2.Text = ar(2)
         tbxMinRadius.Text = ar(3)
         tbxMaxRadius.Text = ar(4)
+        tbxRecognizeParam.Text = ar(5)
+
         minDist = Double.Parse(Me.tbxMinDist.Text)
         p1 = Double.Parse(Me.tbxP1.Text)
         p2 = Double.Parse(Me.tbxP2.Text)
         minRadius = Integer.Parse(Me.tbxMinRadius.Text)
         maxRadius = Integer.Parse(Me.tbxMaxRadius.Text)
+        Me.DICE_AVERAGE = Integer.Parse(tbxRecognizeParam.Text)
     End Sub
 
     ''' <summary>
@@ -303,6 +307,79 @@ Public Class frmMainDice
         End If
     End Sub
 
+#Region "Private my function"
+    ''' <summary>
+    ''' Arduino　サイコロ振り信号を送信 1,2,3・・・ "d" is default 13[ms]
+    ''' </summary>
+    ''' <param name="v"></param>
+    Private Sub SendShoot(Optional ByVal v As String = "d")
+        Try
+            If oSerialPort.IsOpen = False Then
+                Return
+            End If
+            oSerialPort.Write(v, 0, 1)
+        Catch ex As Exception
+
+        End Try
+    End Sub
+
+    ''' <summary>
+    ''' パラメータ更新
+    ''' </summary>
+    Private Sub UpdateRecognizeParameter()
+        Dim temp As Double = 0.0
+        If String.IsNullOrEmpty(tbxMinDist.Text) = True Then
+            Return
+        Else
+            If Double.TryParse(tbxMinDist.Text, temp) Then
+                Me.minDist = Double.Parse(temp)
+            End If
+        End If
+
+        If String.IsNullOrEmpty(tbxP1.Text) = True Then
+            Return
+        Else
+            If Double.TryParse(tbxP1.Text, temp) Then
+                Me.p1 = Double.Parse(tbxP1.Text)
+            End If
+        End If
+
+        If String.IsNullOrEmpty(tbxP2.Text) = True Then
+            Return
+        Else
+            If Double.TryParse(tbxP2.Text, temp) Then
+                Me.p2 = Double.Parse(tbxP2.Text)
+            End If
+        End If
+
+        If String.IsNullOrEmpty(tbxMinRadius.Text) = True Then
+            Return
+        Else
+            If Double.TryParse(tbxMinRadius.Text, temp) Then
+                Me.minRadius = Integer.Parse(tbxMinRadius.Text)
+            End If
+        End If
+
+        If String.IsNullOrEmpty(tbxMaxRadius.Text) = True Then
+            Return
+        Else
+            If Double.TryParse(tbxMaxRadius.Text, temp) Then
+                Me.maxRadius = Integer.Parse(tbxMaxRadius.Text)
+            End If
+        End If
+
+        '認識　平均数
+        If String.IsNullOrEmpty(tbxRecognizeParam.Text) = True Then
+            Return
+        Else
+            If Double.TryParse(tbxRecognizeParam.Text, temp) Then
+                Me.DICE_AVERAGE = Integer.Parse(tbxRecognizeParam.Text)
+            End If
+        End If
+    End Sub
+#End Region
+
+#Region "Private event"
     ''' <summary>
     ''' カメラ認識部分
     ''' </summary>
@@ -364,10 +441,10 @@ Public Class frmMainDice
                             Using clipedImage = clsUtil.ClipIplROI(tempipl, clickedPoint, 100, 100)
                                 Me.pbxCliped.ImageIpl = clipedImage
                                 Dim zoomSize = clipedImage.Size
-                                zoomSize.Height = 400   '300
-                                zoomSize.Width = 400    '300
+                                zoomSize.Height = 500   '300
+                                zoomSize.Width = 500    '300
                                 zoomIpl = New IplImage(zoomSize, BitDepth.U8, 1)
-                                Cv.Resize(clipedImage, zoomIpl, Interpolation.Linear)
+                                Cv.Resize(clipedImage, zoomIpl, Interpolation.Cubic)
                             End Using
 
                             'for opt
@@ -386,6 +463,10 @@ Public Class frmMainDice
                                         Dim p = Cv.GetSeqElem(circles, i)
                                         Cv.Circle(zoomIpl, Cv.Point(p.Value.Center.X, p.Value.Center.Y), p.Value.Radius, Cv.RGB(255, 0, 0))
                                     Next
+
+                                    'Featureに表示
+                                    'Dim setIpl As IplImage = New IplImage(New CvSize(pbxImageFeature.Width, pbxImageFeature.Width), BitDepth.U8, 1)
+                                    'Cv.Resize(zoomIpl, setIpl, Interpolation.Cubic)
                                     Me.pbxImageFeature.ImageIpl = zoomIpl
 
                                     '円の数＝サイコロの数
@@ -399,10 +480,13 @@ Public Class frmMainDice
                                     lblState.Text = "Recognize..."
                                 End Sub)
 
+                            'debug
+                            Console.WriteLine("DiceRecognize:{0}", circleCount)
+
                             'dice detect using average
                             Me.count_recognize += 1
                             aveDiceValue += CDbl(circleCount)
-                            If Me.count_recognize > DICE_AVERAGE Then
+                            If Me.count_recognize >= DICE_AVERAGE Then
                                 recognizeDice = CInt(Math.Round(aveDiceValue / CDbl(DICE_AVERAGE), MidpointRounding.AwayFromZero))
 
                                 'init counter
@@ -454,7 +538,7 @@ Public Class frmMainDice
                     '--------------------------------------------------------------------------
                     'Shoot
                     '--------------------------------------------------------------------------
-                    SendShoot("f") 'a:10, d:13(default) 
+                    SendShoot("g") 'a:10, d:13(default) 
 
                     'init counter
                     doRecognize = False
@@ -488,9 +572,9 @@ Public Class frmMainDice
                         aveDiceValue = 0.0
 
                         state = 0
-                    ElseIf countState3 = 15 Then
+                    ElseIf countState3 = 18 Then
                         'サイコロが斜めになるのを抑止
-                        SendShoot("1") 'a:10, d:13(default) 
+                        'SendShoot("1") 'a:10, d:13(default) 
                     End If
                 End If
 
@@ -590,41 +674,40 @@ Public Class frmMainDice
         End If
     End Sub
 
-    Private Sub btnUpdate_Click(sender As Object, e As EventArgs) Handles btnUpdate.Click
-        ParamUpdate()
-    End Sub
-
+    ''' <summary>
+    ''' Arduino ダイス振る送信
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
     Private Sub btnSend_Click(sender As Object, e As EventArgs) Handles btnSend.Click
         SendShoot("d")
     End Sub
 
-    ''' <summary>
-    ''' パラメータ更新
-    ''' </summary>
-    Private Sub ParamUpdate()
-        Me.minDist = Double.Parse(tbxMinDist.Text)
-        Me.p1 = Double.Parse(tbxP1.Text)
-        Me.p2 = Double.Parse(tbxP2.Text)
-        Me.minRadius = Integer.Parse(tbxMinRadius.Text)
-        Me.maxRadius = Integer.Parse(tbxMaxRadius.Text)
-        SaveParameter()
+    Private Sub tbxMinDist_TextChanged(sender As Object, e As EventArgs) Handles tbxMinDist.TextChanged
+        UpdateRecognizeParameter()
     End Sub
 
-    ''' <summary>
-    ''' Arduino　サイコロ振り信号を送信
-    ''' "d" is default 13[ms]
-    ''' </summary>
-    ''' <param name="v"></param>
-    Private Sub SendShoot(Optional ByVal v As String = "d")
-        Try
-            If oSerialPort.IsOpen = False Then
-                Return
-            End If
-            oSerialPort.Write(v, 0, 1)
-        Catch ex As Exception
-
-        End Try
+    Private Sub tbxP1_TextChanged(sender As Object, e As EventArgs) Handles tbxP1.TextChanged
+        UpdateRecognizeParameter()
     End Sub
+
+    Private Sub tbxP2_TextChanged(sender As Object, e As EventArgs) Handles tbxP2.TextChanged
+        UpdateRecognizeParameter()
+    End Sub
+
+    Private Sub tbxMinRadius_TextChanged(sender As Object, e As EventArgs) Handles tbxMinRadius.TextChanged
+        UpdateRecognizeParameter()
+    End Sub
+
+    Private Sub tbxMaxRadius_TextChanged(sender As Object, e As EventArgs) Handles tbxMaxRadius.TextChanged
+        UpdateRecognizeParameter()
+    End Sub
+
+    Private Sub tbxRecognizeParam_TextChanged(sender As Object, e As EventArgs) Handles tbxRecognizeParam.TextChanged
+        UpdateRecognizeParameter()
+        Me.count_recognize = 0
+    End Sub
+#End Region
 
     '/////////////////////////////////////////////////////////////////////////////////////////
     'シリアルポート
@@ -722,6 +805,7 @@ Public Class frmMainDice
         Next
         UpdateFrequency()
     End Sub
+
     '/////////////////////////////////////////////////////////////////////////////////////////
     '最適化　実験
     '/////////////////////////////////////////////////////////////////////////////////////////
@@ -759,12 +843,6 @@ Public Class frmMainDice
         End Try
     End Sub
 
-    Private Sub btnRecognizeParamUpdate_Click(sender As Object, e As EventArgs) Handles btnRecognizeParamUpdate.Click
-        If String.IsNullOrEmpty(tbxRecognizeParam.Text) Then
-            Return
-        End If
-        Me.DICE_AVERAGE = Integer.Parse(tbxRecognizeParam.Text)
-    End Sub
 End Class
 
 Public Class optHoughParameter

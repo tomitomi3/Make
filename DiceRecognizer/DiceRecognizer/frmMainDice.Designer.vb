@@ -48,7 +48,6 @@ Partial Class frmMainDice
         Me.tbxP2 = New System.Windows.Forms.TextBox()
         Me.tbxMinRadius = New System.Windows.Forms.TextBox()
         Me.tbxMaxRadius = New System.Windows.Forms.TextBox()
-        Me.btnUpdate = New System.Windows.Forms.Button()
         Me.oSerialPort = New System.IO.Ports.SerialPort(Me.components)
         Me.btnPortOpen = New System.Windows.Forms.Button()
         Me.cbxPort = New System.Windows.Forms.ComboBox()
@@ -63,7 +62,6 @@ Partial Class frmMainDice
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
         Me.btnClear = New System.Windows.Forms.Button()
         Me.Label2 = New System.Windows.Forms.Label()
-        Me.btnRecognizeParamUpdate = New System.Windows.Forms.Button()
         Me.tbxRecognizeParam = New System.Windows.Forms.TextBox()
         Me.lblState = New System.Windows.Forms.Label()
         Me.Label3 = New System.Windows.Forms.Label()
@@ -283,15 +281,6 @@ Partial Class frmMainDice
         Me.tbxMaxRadius.Size = New System.Drawing.Size(70, 19)
         Me.tbxMaxRadius.TabIndex = 20
         '
-        'btnUpdate
-        '
-        Me.btnUpdate.Location = New System.Drawing.Point(913, 75)
-        Me.btnUpdate.Name = "btnUpdate"
-        Me.btnUpdate.Size = New System.Drawing.Size(70, 23)
-        Me.btnUpdate.TabIndex = 21
-        Me.btnUpdate.Text = "Update"
-        Me.btnUpdate.UseVisualStyleBackColor = True
-        '
         'btnPortOpen
         '
         Me.btnPortOpen.Location = New System.Drawing.Point(221, 27)
@@ -339,9 +328,9 @@ Partial Class frmMainDice
         Me.Label1.AutoSize = True
         Me.Label1.Location = New System.Drawing.Point(748, 268)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(75, 12)
+        Me.Label1.Size = New System.Drawing.Size(109, 12)
         Me.Label1.TabIndex = 25
-        Me.Label1.Text = "OptParameter"
+        Me.Label1.Text = "OptParameter debug"
         '
         'oPlot
         '
@@ -419,19 +408,9 @@ Partial Class frmMainDice
         Me.Label2.AutoSize = True
         Me.Label2.Location = New System.Drawing.Point(748, 214)
         Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(106, 12)
+        Me.Label2.Size = New System.Drawing.Size(163, 12)
         Me.Label2.TabIndex = 22
-        Me.Label2.Text = "Recognize paramter"
-        '
-        'btnRecognizeParamUpdate
-        '
-        Me.btnRecognizeParamUpdate.Cursor = System.Windows.Forms.Cursors.Default
-        Me.btnRecognizeParamUpdate.Location = New System.Drawing.Point(913, 234)
-        Me.btnRecognizeParamUpdate.Name = "btnRecognizeParamUpdate"
-        Me.btnRecognizeParamUpdate.Size = New System.Drawing.Size(75, 23)
-        Me.btnRecognizeParamUpdate.TabIndex = 24
-        Me.btnRecognizeParamUpdate.Text = "Update"
-        Me.btnRecognizeParamUpdate.UseVisualStyleBackColor = True
+        Me.Label2.Text = "Recognize paramter(averaging)"
         '
         'tbxRecognizeParam
         '
@@ -466,13 +445,11 @@ Partial Class frmMainDice
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.lblState)
         Me.Controls.Add(Me.tbxRecognizeParam)
-        Me.Controls.Add(Me.btnRecognizeParamUpdate)
         Me.Controls.Add(Me.GroupBox1)
         Me.Controls.Add(Me.btnStart)
         Me.Controls.Add(Me.tbxCorrect)
         Me.Controls.Add(Me.btnOpt)
         Me.Controls.Add(Me.btnSend)
-        Me.Controls.Add(Me.btnUpdate)
         Me.Controls.Add(Me.btnPortOpen)
         Me.Controls.Add(Me.lblP3)
         Me.Controls.Add(Me.lblP5)
@@ -538,7 +515,6 @@ Partial Class frmMainDice
     Friend WithEvents tbxP2 As System.Windows.Forms.TextBox
     Friend WithEvents tbxMinRadius As System.Windows.Forms.TextBox
     Friend WithEvents tbxMaxRadius As System.Windows.Forms.TextBox
-    Friend WithEvents btnUpdate As System.Windows.Forms.Button
     Friend WithEvents oSerialPort As System.IO.Ports.SerialPort
     Friend WithEvents btnPortOpen As System.Windows.Forms.Button
     Friend WithEvents cbxPort As System.Windows.Forms.ComboBox
@@ -553,7 +529,6 @@ Partial Class frmMainDice
     Friend WithEvents GroupBox1 As System.Windows.Forms.GroupBox
     Friend WithEvents btnClear As Button
     Friend WithEvents Label2 As Label
-    Friend WithEvents btnRecognizeParamUpdate As Button
     Friend WithEvents tbxRecognizeParam As TextBox
     Friend WithEvents lblState As Label
     Friend WithEvents Label3 As Label
