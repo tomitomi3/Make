@@ -799,10 +799,24 @@ Public Class frmMainDice
         Me.oPlot.Model.Axes.Add(y)
     End Sub
 
+    ''' <summary>
+    ''' カウントを初期化
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
+        '初期化
         For i As Integer = 0 To Me.recognizedDice.Length - 1
             Me.recognizedDice(i) = 0
         Next
+
+        '累積ファイルを削除
+        Try
+            File.Delete(RECENT_DICE_FILE)
+        Catch ex As Exception
+
+        End Try
+
         UpdateFrequency()
     End Sub
 
