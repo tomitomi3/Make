@@ -65,11 +65,14 @@ Partial Class frmMainDice
         Me.tbxRecognizeParam = New System.Windows.Forms.TextBox()
         Me.lblState = New System.Windows.Forms.Label()
         Me.Label3 = New System.Windows.Forms.Label()
+        Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+        Me.recentDice = New System.Windows.Forms.TextBox()
         CType(Me.pbxIplImg, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.mStrip.SuspendLayout()
         CType(Me.pbxCliped, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.pbxImageFeature, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox1.SuspendLayout()
+        Me.GroupBox2.SuspendLayout()
         Me.SuspendLayout()
         '
         'pbxIplImg
@@ -106,7 +109,7 @@ Partial Class frmMainDice
         Me.mStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuToolStripMenuItem})
         Me.mStrip.Location = New System.Drawing.Point(0, 0)
         Me.mStrip.Name = "mStrip"
-        Me.mStrip.Size = New System.Drawing.Size(1059, 24)
+        Me.mStrip.Size = New System.Drawing.Size(1398, 24)
         Me.mStrip.TabIndex = 0
         Me.mStrip.Text = "MenuStrip1"
         '
@@ -341,7 +344,7 @@ Partial Class frmMainDice
         Me.oPlot.Location = New System.Drawing.Point(3, 15)
         Me.oPlot.Name = "oPlot"
         Me.oPlot.PanCursor = System.Windows.Forms.Cursors.Hand
-        Me.oPlot.Size = New System.Drawing.Size(571, 296)
+        Me.oPlot.Size = New System.Drawing.Size(816, 315)
         Me.oPlot.TabIndex = 0
         Me.oPlot.Text = "oPlot"
         Me.oPlot.ZoomHorizontalCursor = System.Windows.Forms.Cursors.SizeWE
@@ -351,7 +354,7 @@ Partial Class frmMainDice
         'btnDebug
         '
         Me.btnDebug.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnDebug.Location = New System.Drawing.Point(940, 87)
+        Me.btnDebug.Location = New System.Drawing.Point(1279, 87)
         Me.btnDebug.Name = "btnDebug"
         Me.btnDebug.Size = New System.Drawing.Size(75, 23)
         Me.btnDebug.TabIndex = 3
@@ -371,10 +374,10 @@ Partial Class frmMainDice
         '
         Me.lblDetail.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lblDetail.AutoSize = True
-        Me.lblDetail.Font = New System.Drawing.Font("MS UI Gothic", 24.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
-        Me.lblDetail.Location = New System.Drawing.Point(580, 15)
+        Me.lblDetail.Font = New System.Drawing.Font("MS UI Gothic", 32.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
+        Me.lblDetail.Location = New System.Drawing.Point(828, 15)
         Me.lblDetail.Name = "lblDetail"
-        Me.lblDetail.Size = New System.Drawing.Size(284, 33)
+        Me.lblDetail.Size = New System.Drawing.Size(376, 43)
         Me.lblDetail.TabIndex = 1
         Me.lblDetail.Text = "Total Shake count:"
         '
@@ -389,14 +392,14 @@ Partial Class frmMainDice
         Me.GroupBox1.Controls.Add(Me.oPlot)
         Me.GroupBox1.Location = New System.Drawing.Point(14, 382)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(1032, 317)
+        Me.GroupBox1.Size = New System.Drawing.Size(1371, 336)
         Me.GroupBox1.TabIndex = 29
         Me.GroupBox1.TabStop = False
         '
         'btnClear
         '
         Me.btnClear.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnClear.Location = New System.Drawing.Point(940, 58)
+        Me.btnClear.Location = New System.Drawing.Point(1279, 58)
         Me.btnClear.Name = "btnClear"
         Me.btnClear.Size = New System.Drawing.Size(75, 23)
         Me.btnClear.TabIndex = 2
@@ -437,11 +440,31 @@ Partial Class frmMainDice
         Me.Label3.TabIndex = 31
         Me.Label3.Text = "↑画面をクリックして青枠でサイコロを含むようにする"
         '
+        'GroupBox2
+        '
+        Me.GroupBox2.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.GroupBox2.Controls.Add(Me.recentDice)
+        Me.GroupBox2.Location = New System.Drawing.Point(14, 724)
+        Me.GroupBox2.Name = "GroupBox2"
+        Me.GroupBox2.Size = New System.Drawing.Size(1371, 68)
+        Me.GroupBox2.TabIndex = 32
+        Me.GroupBox2.TabStop = False
+        '
+        'recentDice
+        '
+        Me.recentDice.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.recentDice.Location = New System.Drawing.Point(3, 15)
+        Me.recentDice.Multiline = True
+        Me.recentDice.Name = "recentDice"
+        Me.recentDice.Size = New System.Drawing.Size(1365, 50)
+        Me.recentDice.TabIndex = 0
+        '
         'frmMainDice
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1059, 711)
+        Me.ClientSize = New System.Drawing.Size(1398, 804)
+        Me.Controls.Add(Me.GroupBox2)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.lblState)
         Me.Controls.Add(Me.tbxRecognizeParam)
@@ -486,6 +509,8 @@ Partial Class frmMainDice
         CType(Me.pbxImageFeature, System.ComponentModel.ISupportInitialize).EndInit()
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
+        Me.GroupBox2.ResumeLayout(False)
+        Me.GroupBox2.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -532,4 +557,6 @@ Partial Class frmMainDice
     Friend WithEvents tbxRecognizeParam As TextBox
     Friend WithEvents lblState As Label
     Friend WithEvents Label3 As Label
+    Friend WithEvents GroupBox2 As GroupBox
+    Friend WithEvents recentDice As TextBox
 End Class

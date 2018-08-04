@@ -511,9 +511,25 @@ Public Class frmMainDice
                                     state = 1
                                     Me.recognizedDice(recognizeDice - 1) += 1 'update dice count
                                     Me.recognizedDiceList.Add(recognizeDice)
+
+                                    'スレッドからUI部の変更
                                     Me.BeginInvoke(
                                             Sub()
                                                 UpdateFrequency()
+                                                Dim dices = New StringBuilder()
+
+                                                Dim diceRecogCount = Me.recognizedDice.Count
+                                                If diceRecogCount <> 200 Then
+                                                    For i As Integer = 0 To 200 - 1
+                                                        dices.Append(String.Format("{0} , ", recognizedDiceList(i)))
+                                                    Next
+                                                Else
+                                                    For i As Integer = diceRecogCount - 200 To 200 - 1
+                                                        dices.Append(String.Format("{0} , ", recognizedDiceList(i)))
+                                                    Next
+                                                End If
+
+                                                recentDice.Text = dices.ToString
                                             End Sub)
 
                                     '定期保存
@@ -742,7 +758,7 @@ Public Class frmMainDice
     'グラフ
     '/////////////////////////////////////////////////////////////////////////////////////////
     Private Sub btnDebug_Click(sender As Object, e As EventArgs) Handles btnDebug.Click
-        If recognizeDice > 0 AndAlso recognizeDice < 7 Then
+        If recognizeDice > 0 AndAlso recognizeDice <7 Then
             Me.recognizedDice(recognizeDice - 1) += 1
             UpdateFrequency()
         End If
