@@ -161,9 +161,8 @@ Public Class frmMainDice
         bgWorker.CancelAsync()
         System.Threading.Thread.Sleep(500)
 
-        '
-        SaveResult()
-        SaveParameter()
+        'データの保存
+        SaveData()
 
         'Dice
         Using writer As New StreamWriter(RECENT_DICE_FILE, True, Encoding.GetEncoding("Shift_JIS"))
@@ -179,10 +178,10 @@ Public Class frmMainDice
     End Sub
 
     ''' <summary>
-    ''' Update parameters
+    ''' save data
     ''' </summary>
     ''' <remarks></remarks>
-    Private Sub SaveParameter()
+    Private Sub SaveData()
         Using writer As New StreamWriter(RECENT_PARAMETER_FILE, False, Encoding.GetEncoding("Shift_JIS"))
             writer.WriteLine(String.Format("{0}", tbxMinDist.Text))
             writer.WriteLine(String.Format("{0}", tbxP1.Text))
@@ -190,6 +189,12 @@ Public Class frmMainDice
             writer.WriteLine(String.Format("{0}", tbxMinRadius.Text))
             writer.WriteLine(String.Format("{0}", tbxMaxRadius.Text))
             writer.WriteLine(String.Format("{0}", tbxRecognizeParam.Text))
+        End Using
+
+        Using writer As New StreamWriter(RECENT_COUNT_FILE, False, Encoding.GetEncoding("Shift_JIS"))
+            For i As Integer = 0 To Me.recognizedDice.Length - 1
+                writer.WriteLine(String.Format("{0}", Me.recognizedDice(i)))
+            Next
         End Using
     End Sub
 
@@ -223,17 +228,6 @@ Public Class frmMainDice
         minRadius = Integer.Parse(Me.tbxMinRadius.Text)
         maxRadius = Integer.Parse(Me.tbxMaxRadius.Text)
         Me.DICE_AVERAGE = Integer.Parse(tbxRecognizeParam.Text)
-    End Sub
-
-    ''' <summary>
-    ''' 結果を保存
-    ''' </summary>
-    Private Sub SaveResult()
-        Using writer As New StreamWriter(RECENT_COUNT_FILE, False, Encoding.GetEncoding("Shift_JIS"))
-            For i As Integer = 0 To Me.recognizedDice.Length - 1
-                writer.WriteLine(String.Format("{0}", Me.recognizedDice(i)))
-            Next
-        End Using
     End Sub
 
     ''' <summary>
@@ -521,6 +515,11 @@ Public Class frmMainDice
                                             Sub()
                                                 UpdateFrequency()
                                             End Sub)
+
+                                    '定期保存
+                                    If (Me.recognizedDiceList.Count Mod 100) = 0 Then
+                                        SaveData()
+                                    End If
                                 End If
                             End If
                         End Using
@@ -604,7 +603,7 @@ Public Class frmMainDice
             End If
 
             'カメラ画像取得タイミング調整　コメントアウトすると最速
-            Threading.Thread.Sleep(20)
+            Threading.Thread.Sleep(5)
 
             'ガーベージコレクト　これをしないとメモリがたまりつづける。
             If GC.GetTotalMemory(False) > 1024 * 1024 * 128 Then
