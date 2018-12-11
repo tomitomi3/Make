@@ -54,7 +54,7 @@ Public Class frmMainDice
     'parameter
     Private MAX_STATE1_SLEEP As Integer = 1 'previous Shoot dice
     Private MAX_STATE2_SLEEP As Integer = 5 'not use
-    Private MAX_STATE3_SLEEP As Integer = 23 '
+    Private MAX_STATE3_SLEEP As Integer = 25 '
 
     ''' <summary>
     ''' Form Load
@@ -518,22 +518,23 @@ Public Class frmMainDice
                                                 UpdateFrequency()
                                                 Dim dices = New StringBuilder()
 
-                                                Dim diceRecogCount = Me.recognizedDice.Count
-                                                If diceRecogCount <> 200 Then
-                                                    For i As Integer = 0 To 200 - 1
-                                                        dices.Append(String.Format("{0} , ", recognizedDiceList(i)))
-                                                    Next
-                                                Else
-                                                    For i As Integer = diceRecogCount - 200 To 200 - 1
-                                                        dices.Append(String.Format("{0} , ", recognizedDiceList(i)))
-                                                    Next
-                                                End If
 
-                                                recentDice.Text = dices.ToString
+                                                'Dim diceRecogCount = Me.recognizedDice.Count
+                                                'If diceRecogCount <> 200 Then
+                                                '    For i As Integer = 0 To 200 - 1
+                                                '        dices.Append(String.Format("{0} , ", recognizedDiceList(i)))
+                                                '    Next
+                                                'Else
+                                                '    For i As Integer = diceRecogCount - 200 To 200 - 1
+                                                '        dices.Append(String.Format("{0} , ", recognizedDiceList(i)))
+                                                '    Next
+                                                'End If
+
+                                                'recentDice.Text = dices.ToString
                                             End Sub)
 
                                     '定期保存
-                                    If (Me.recognizedDiceList.Count Mod 100) = 0 Then
+                                    If (Me.recognizedDiceList.Count Mod 50) = 0 Then
                                         SaveData()
                                     End If
                                 End If
@@ -619,7 +620,7 @@ Public Class frmMainDice
             End If
 
             'カメラ画像取得タイミング調整　コメントアウトすると最速
-            Threading.Thread.Sleep(5)
+            Threading.Thread.Sleep(15)
 
             'ガーベージコレクト　これをしないとメモリがたまりつづける。
             If GC.GetTotalMemory(False) > 1024 * 1024 * 128 Then
